@@ -1,3 +1,5 @@
+# TODO: Descobrir porque a interpolação do polinômio cúbico tá inexata
+
 from typing import Callable
 import numpy as np
 import numpy.typing as npt
@@ -15,7 +17,7 @@ class NotFittedError(ValueError):
         super().__init__(msg)
 
 
-class Splines:
+class NaturalCubicSplines:
     """
     Natural cubic splines interpolation class.
 
@@ -172,6 +174,7 @@ class Splines:
 
 # -----------------------------------------------------------------
 
+
 if __name__ == "__main__":
     import matplotlib
 
@@ -203,7 +206,7 @@ if __name__ == "__main__":
         y_treino = func(x_treino)
 
         # 2. Criar e treinar o modelo Spline
-        modelo_spline = Splines()
+        modelo_spline = NaturalCubicSplines()
         modelo_spline.fit(x_treino, y_treino)
 
         # 3. Gerar dados de plotagem (bem densos para uma curva suave)
