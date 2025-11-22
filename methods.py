@@ -1,0 +1,101 @@
+import numpy as np
+import numpy.typing as npt
+from typing import Callable, Optional, Any
+from abc import ABC, abstractmethod
+from numerical_methods.utils import TableResult
+
+
+class OneStepMethod(ABC):
+    def __init__(
+        self,
+        function: Callable[..., npt.NDArray | float],
+        step_size: float,
+        *args,
+        **kwargs
+    ) -> None:
+        if not isinstance(function, Callable):
+            raise TypeError("function must be a callable object")
+        if not isinstance(step_size, (int, float)):
+            raise TypeError("step_size must be a number")
+        if step_size <= 0:
+            raise ValueError("step_size must be positive")
+
+        self.function = function
+        self.step_size = step_size
+        self.args = args
+        self.kwargs = kwargs
+
+        self.x_: Optional[npt.NDArray] = None
+        self.y_: Optional[npt.NDArray] = None
+
+    @abstractmethod
+    def _integrate(
+        self, x_start: float, x_end: float, y_start: npt.NDArray, h: float
+    ) -> tuple[npt.NDArray, npt.NDArray]:
+        pass
+
+    def solve(
+        self, x_start: float, x_end: float, y_start: npt.NDArray | float
+    ) -> tuple[npt.NDArray, npt.NDArray]:
+        if not all(isinstance(x, (int, float)) for x in [x_start, x_end]):
+            raise TypeError("x_start and x_end must be numbers (int or float)")
+        if not isinstance(y_start, (int, float, np.ndarray)):
+            raise TypeError("y_start must be a number or a numpy array")
+        if x_end < x_start:
+            raise ValueError("x_end must be greater than x_start")
+
+        y_start_arr = np.atleast_1d(y_start).astype(float)
+
+        x, y = self._integrate(x_start, x_end, y_start_arr, self.step_size)
+
+        self.x_ = x
+        self.y_ = y.squeeze()
+
+        return self.x_, self.y_
+
+    def convergence_table(
+        self,
+        x_start: float,
+        x_end: float,
+        y_start: npt.NDArray | float,
+        y_exact: Callable[..., npt.NDArray | float],
+        first_n: int = 2,
+        n_rows: int = 8,
+    ) -> TableResult:
+        if not isinstance(y_start, (int, float, np.ndarray)):
+            raise TypeError("y_start must be a number or a numpy array")
+        if not isinstance(y_exact, Callable):
+            raise TypeError("y_exact must be a callable object")
+        if not all(isinstance(x, (int, float)) for x in [x_start, x_end]):
+            raise TypeError("x_start and x_end must be numbers (int or float)")
+        if not all(isinstance(n, int) for n in [first_n, n_rows]):
+            raise TypeError("first_n and n_rows must be integers")
+        if not all(n > 0 for n in [first_n, n_rows]):
+            raise ValueError("first_n and n_rows must be positive integers")
+
+        y_start = np.atleast_1d(y_start).astype(float)
+        y_true_end = np.atleast_1d(y_exact(x_end))
+
+        results = []
+        last_error = 0.0
+
+        for i in range(n_rows):
+            n_steps = first_n * (2**i)
+            h = (x_end - x_start) / n_steps
+
+            _, y_arr = self._integrate(x_start, x_end, y_start, h)
+
+            y_end = y_arr[-1]
+
+            error = np.linalg.norm(y_end - y_true_end)
+            q = last_error / error if i > 0 and error != 0 else 0.0
+            log2_q = np.log2(q) if q > 0 else 0.0
+
+            results.append([n_steps, h, error, q, log2_q])
+            last_error = error
+
+        return TableResult(
+            data=results,
+            headers=["n", "h", "error", "q", "log2(q)"],
+            float_formats=(".0f", ".3e", ".3e", ".3e", ".3f"),
+        )
