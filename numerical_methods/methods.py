@@ -61,7 +61,7 @@ class OneStepMethod(ABC):
         x_start: float,
         x_end: float,
         y_start: npt.NDArray | float,
-        y_exact: Callable[..., npt.NDArray | float],
+        y_exact: Optional[Callable[..., npt.NDArray | float]] = None,
         first_n: int = 2,
         n_rows: int = 8,
     ) -> TableResult:
@@ -77,10 +77,14 @@ class OneStepMethod(ABC):
             raise ValueError("first_n and n_rows must be positive integers")
 
         y_start = np.atleast_1d(y_start).astype(float)
-        y_true_end = np.atleast_1d(y_exact(x_end))
+
+        if y_exact is not None:
+            y_true_end = np.atleast_1d(y_exact(x_end))
 
         results = []
-        last_error = 0.0
+        last_metric = 0.0
+
+        y_end_prev = None
 
         for i in range(n_rows):
             n_steps = first_n * (2**i)
@@ -90,16 +94,27 @@ class OneStepMethod(ABC):
 
             y_end = y_arr[-1]
 
-            error = np.linalg.norm(y_end - y_true_end)
-            q = last_error / error if i > 0 and error != 0 else 0.0
+            if y_exact is not None:
+                metric = np.linalg.norm(y_end_curr - y_true_end)
+                col_name = "Error (Exact)"
+            else:
+                if y_end_prev is not None:
+                    metric = np.linalg.norm(y_end - y_end_prev)
+                else:
+                    metric = 0.0
+                col_name = "Diff (y_h - y_2h)"
+
+            q = last_metric / metric if i > 0 and metric != 0 else 0.0
             log2_q = np.log2(q) if q > 0 else 0.0
 
-            results.append([n_steps, h, error, q, log2_q])
-            last_error = error
+            results.append([n_steps, h, metric, q, log2_q])
+
+            last_metric = metric
+            y_end_prev = y_end_curr
 
         return TableResult(
             data=results,
-            headers=["n", "h", "error", "q", "log2(q)"],
+            headers=["n", "h", col_name, "q", "log2(q)"],
             float_formats=(".0f", ".3e", ".3e", ".3e", ".3f"),
         )
 

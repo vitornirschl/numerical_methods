@@ -98,5 +98,5 @@ class NewtonRaphson:
         return TableResult(
             data=data,
             headers=headers,
-            float_formats=(".0f", ".4e", ".4f"),
+            float_formats=(".0f", ".4e", ".4e"),
         )
