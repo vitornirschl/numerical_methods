@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "numerical_methods"
-version = "0.0.2"
+version = "0.0.3"
 description = "Biblioteca de métodos numéricos abordados em MAP0214"
 authors = [{ name = "Vitor Nirschl", email = "vitornirschl@gmail.com" }]
 requires-python = ">=3.13"
