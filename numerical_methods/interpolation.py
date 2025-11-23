@@ -1,7 +1,9 @@
-from typing import Callable, Optional
 import numpy as np
 import numpy.typing as npt
-from numerical_methods.utils import NotFittedError
+
+from typing import Callable, Optional
+
+from .utils import NotFittedError
 
 
 class NaturalCubicSplines:
@@ -159,5 +161,5 @@ class NaturalCubicSplines:
             return y_pred.item()
         return y_pred
 
-
-# -----------------------------------------------------------------
+    def convergence_table(self):
+        raise NotImplementedError

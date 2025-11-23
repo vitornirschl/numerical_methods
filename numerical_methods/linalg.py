@@ -1,19 +1,15 @@
 # TODO: Implementar o método de eliminação de Gauss
 
 import numpy as np
-from typing import Optional
 import numpy.typing as npt
 
+from typing import Optional
 
-class Jacobi:
-    def __init__(self, tolerance: float = 1e-5, max_iterations: int = 1000):
-        self.tolerance = tolerance
-        self.max_iterations = max_iterations
+from .utils import TableResult
+from .methods import IterativeLinearSolver
 
-        self.x_ = None
-        self.n_iter_ = 0
-        self.final_residual_ = None
-        self.convergence_history_ = []
+
+class Jacobi(IterativeLinearSolver):
 
     def solve(
         self, A: npt.NDArray, b: npt.NDArray, x0: Optional[npt.NDArray] = None
@@ -24,7 +20,7 @@ class Jacobi:
                 "A must be a square matrix and match vector b's dimensions"
             )
         if np.any(np.diag(A) == 0):
-            raise np.linalg.LinalgError(f"Zero detected on diagonal of matrix A.")
+            raise np.linalg.LinAlgError(f"Zero detected on diagonal of matrix A.")
 
         if x0 is None:
             x = np.zeros(n_dims)
@@ -54,15 +50,7 @@ class Jacobi:
         )
 
 
-class GaussSeidel:
-    def __init__(self, tolerance: float = 1e-5, max_iterations: int = 1000):
-        self.tolerance = tolerance
-        self.max_iterations = max_iterations
-
-        self.x_ = None
-        self.n_iter_ = 0
-        self.final_residual_ = None
-        self.convergence_history_ = []
+class GaussSeidel(IterativeLinearSolver):
 
     def solve(
         self, A: npt.NDArray, b: npt.NDArray, x0: Optional[npt.NDArray] = None

@@ -1,6 +1,56 @@
-__pycache__
-.git
-.pytest_cache
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Ambientes Virtuais (NUNCA suba isso!) ---
+# Nomes comuns de venvs
+.env
 .venv
-teste_
-implicit_one_step.py
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Distribuição e Build (Setuptools/Pip) ---
+# Estas pastas são criadas quando você roda 'pip install -e .' ou 'python -m build'
+build/
+dist/
+develop-eggs/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Jupyter Notebooks ---
+# Ignora os checkpoints automáticos (backups)
+.ipynb_checkpoints
+# Se quiser ignorar o profile do IPython
+profile_default/
+ipython_config.py
+
+# --- IDEs e Editores (Configurações locais) ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Sistema Operacional ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- Testes e Cobertura ---
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/

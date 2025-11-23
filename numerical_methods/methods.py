@@ -1,8 +1,11 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 import numpy.typing as npt
+
 from typing import Callable, Optional, Any
-from abc import ABC, abstractmethod
-from numerical_methods.utils import TableResult
+
+from .utils import TableResult
 
 
 class OneStepMethod(ABC):
@@ -11,7 +14,7 @@ class OneStepMethod(ABC):
         function: Callable[..., npt.NDArray | float],
         step_size: float,
         *args,
-        **kwargs
+        **kwargs,
     ) -> None:
         if not isinstance(function, Callable):
             raise TypeError("function must be a callable object")
@@ -98,4 +101,40 @@ class OneStepMethod(ABC):
             data=results,
             headers=["n", "h", "error", "q", "log2(q)"],
             float_formats=(".0f", ".3e", ".3e", ".3e", ".3f"),
+        )
+
+
+class IterativeLinearSolver(ABC):
+    def __init__(self, tolerance: float = 1e-5, max_iterations: int = 1000):
+        self.tolerance = tolerance
+        self.max_iterations = max_iterations
+
+        self.x_ = None
+        self.n_iter_ = 0
+        self.final_residual_ = None
+        self.convergence_history_ = []
+
+    @abstractmethod
+    def solve(
+        self, A: npt.NDArray, b: npt.NDArray, x0: Optional[npt.NDArray] = None
+    ) -> npt.NDArray:
+        pass
+
+    def convergence_table(self) -> TableResult:
+        if not self.convergence_history_:
+            raise ValueError("The solver has not been run yet. Call solve() first.")
+
+        data = []
+        headers = ["Iteration", "||x_new - x_old||", "Ratio"]
+
+        for k, error in enumerate(self.convergence_history_):
+            ratio = 0.0
+            if k > 0 and self.convergence_history_[k - 1] > 0:
+                ratio = error / self.convergence_history_[k - 1]
+            data.append([k + 1, error, ratio])
+
+        return TableResult(
+            data=data,
+            headers=headers,
+            float_formats=(".0f", ".4e", ".4f"),
         )

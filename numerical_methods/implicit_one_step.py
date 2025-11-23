@@ -1,10 +1,12 @@
 import numpy as np
 import numpy.typing as npt
+
 from typing import Callable, Optional, Any
-from numerical_methods.methods import OneStepMethod
-from numerical_methods.protocols import RootSolver, ExplicitStepper
-from numerical_methods.fixed_point import NewtonRaphson
-from numerical_methods.explicit_one_step import EulerMethod
+
+from .methods import OneStepMethod
+from .protocols import RootSolver, ExplicitStepper
+from .fixed_point import NewtonRaphson
+from .explicit_one_step import EulerMethod
 
 
 class Trapezoid(OneStepMethod):

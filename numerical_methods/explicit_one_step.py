@@ -1,9 +1,11 @@
 import numpy as np
 import numpy.typing as npt
+
 from typing import Callable, Optional, Any
-from numerical_methods.methods import OneStepMethod
-from numerical_methods.protocols import ExplicitStepper
-from numerical_methods.utils import TableResult
+
+from .methods import OneStepMethod
+from .protocols import ExplicitStepper
+from .utils import TableResult
 
 
 class EulerMethod(OneStepMethod):
@@ -31,6 +33,6 @@ class EulerMethod(OneStepMethod):
         y: npt.NDArray,
         step_size: float,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> npt.NDArray:
         return y + step_size * function(x, y, *args, **kwargs)

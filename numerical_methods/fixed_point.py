@@ -1,9 +1,13 @@
 import numpy as np
 import numpy.typing as npt
+
 import numdifftools as nd
-from numerical_methods.linalg import GaussSeidel
-from numerical_methods.protocols import LinearSolver
+
 from typing import Callable, Optional
+
+from .linalg import GaussSeidel
+from .protocols import LinearSolver
+from .utils import TableResult
 
 
 class NewtonRaphson:
@@ -76,4 +80,23 @@ class NewtonRaphson:
 
         raise np.linalg.LinAlgError(
             f"Newton-Raphson failed to converge in {self.max_iterations} iterations."
+        )
+
+    def convergence_table(self) -> TableResult:
+        if not self.convergence_history_:
+            raise ValueError("The solver has not been run yet. Call solve() first.")
+
+        data = []
+        headers = ["Iteration", "||dx||", "Ratio (e_{k}/e_{k-1})"]
+
+        for k, error in enumerate(self.convergence_history_):
+            ratio = 0.0
+            if k > 0 and self.convergence_history_[k - 1] > 0:
+                ratio = error / self.convergence_history_[k - 1]
+            data.append([k + 1, error, ratio])
+
+        return TableResult(
+            data=data,
+            headers=headers,
+            float_formats=(".0f", ".4e", ".4f"),
         )

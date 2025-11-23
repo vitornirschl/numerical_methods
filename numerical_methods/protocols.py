@@ -1,5 +1,5 @@
-from typing import Any, Callable, Optional, Protocol, runtime_checkable
 import numpy.typing as npt
+from typing import Any, Callable, Optional, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -28,7 +28,7 @@ class RootSolver(Protocol):
         function: Callable[..., npt.NDArray],
         x0: npt.NDArray,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> npt.NDArray: ...
 
 
@@ -46,5 +46,5 @@ class ExplicitStepper(Protocol):
         y: npt.NDArray,
         step_size: float,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> npt.NDArray: ...
