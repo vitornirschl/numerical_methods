@@ -92,8 +92,7 @@ class OneStepMethod(ABC):
             h = (x_end - x_start) / n_steps
 
             _, y_arr = self._integrate(x_start, x_end, y_start, h)
-
-            y_end = y_arr[-1]
+            y_end_curr = y_arr[-1]
 
             if y_exact is not None:
                 metric = np.linalg.norm(y_end_curr - y_true_end)
