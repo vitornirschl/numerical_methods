@@ -99,7 +99,7 @@ class OneStepMethod(ABC):
                 col_name = "Error (Exact)"
             else:
                 if y_end_prev is not None:
-                    metric = np.linalg.norm(y_end - y_end_prev)
+                    metric = np.linalg.norm(y_end_curr - y_end_prev)
                 else:
                     metric = 0.0
                 col_name = "Diff (y_h - y_2h)"
