@@ -67,8 +67,9 @@ class OneStepMethod(ABC):
     ) -> TableResult:
         if not isinstance(y_start, (int, float, np.ndarray)):
             raise TypeError("y_start must be a number or a numpy array")
-        if not isinstance(y_exact, Callable):
-            raise TypeError("y_exact must be a callable object")
+        if y_exact is not None:
+            if not isinstance(y_exact, Callable):
+                raise TypeError("y_exact must be a callable object")
         if not all(isinstance(x, (int, float)) for x in [x_start, x_end]):
             raise TypeError("x_start and x_end must be numbers (int or float)")
         if not all(isinstance(n, int) for n in [first_n, n_rows]):
