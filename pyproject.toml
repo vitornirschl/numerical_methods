@@ -7,7 +7,7 @@ name = "numerical_methods"
 version = "0.0.3"
 description = "Biblioteca de métodos numéricos abordados em MAP0214"
 authors = [{ name = "Vitor Nirschl", email = "vitornirschl@gmail.com" }]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = ["numpy", "tabulate", "numdifftools"]
 
 [tool.setuptools.packages.find]
